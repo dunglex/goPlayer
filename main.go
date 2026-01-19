@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -33,27 +34,29 @@ func main() {
 		if err != nil {
 			log.Fatal("Can't open ~/Music directory")
 		}
-		videosDir, err := homedir.Expand("~/Videos/")
-		if err != nil {
-			log.Fatal("Can't open ~/Videos directory")
-		}
+		println("Music dir: " + musicDir)
 
 		musicFiles, err := getSongList(musicDir)
 		if err != nil {
 			log.Fatal("Can't get music list")
 		}
+		println(fmt.Sprintf("Music files found: %d", len(musicFiles)))
+
+		videosDir, err := homedir.Expand("~/Videos/")
+		if err != nil {
+			log.Fatal("Can't open ~/Videos directory")
+		}
+		println("Videos dir: " + videosDir)
 
 		videoFiles, err := getSongList(videosDir)
 		if err != nil {
 			log.Fatal("Can't get video list")
 		}
+		println(fmt.Sprintf("Video files found: %d", len(videoFiles)))
 
 		// Combine both lists
 		fileList = append(musicFiles, videoFiles...)
-		songDir, err = homedir.Dir()
-		if err != nil {
-			log.Fatal("Can't get home directory")
-		}
+		println(fmt.Sprintf("Total files found: %d", len(fileList)))
 	}
 	songs := make([]Song, 0, len(fileList))
 
@@ -71,7 +74,7 @@ func main() {
 		currentFile.Close()
 	}
 	if len(songs) == 0 {
-		log.Fatal("Could not find any media to play")
+		println("Could not find any media to play")
 	}
 	userInterface, err := NewUi(songs, len(songDir))
 	if err != nil {
